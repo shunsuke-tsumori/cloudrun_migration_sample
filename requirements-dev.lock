@@ -9,9 +9,17 @@
 #   generate-hashes: false
 
 -e file:.
-greenlet==3.0.3
-    # via sqlalchemy
+alembic==1.13.2
+    # via cloudrun-migration-sample
+mako==1.3.5
+    # via alembic
+markupsafe==2.1.5
+    # via mako
+psycopg2-binary==2.9.9
+    # via cloudrun-migration-sample
 sqlalchemy==2.0.31
+    # via alembic
     # via cloudrun-migration-sample
 typing-extensions==4.12.2
+    # via alembic
     # via sqlalchemy
