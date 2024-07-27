@@ -13,6 +13,7 @@ resource "google_sql_database_instance" "db" {
     }
   }
   depends_on = [google_service_networking_connection.db_conn]
+  deletion_protection = false
 }
 
 resource "google_sql_user" "db_admin" {
