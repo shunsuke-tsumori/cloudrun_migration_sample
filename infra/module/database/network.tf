@@ -17,3 +17,9 @@ resource "google_service_networking_connection" "db_conn" {
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.db_private_ip.name]
 }
+
+resource "google_vpc_access_connector" "connector" {
+  name          = "vpc-access-con"
+  ip_cidr_range = "10.10.0.0/28"
+  network       = google_compute_network.db_network.id
+}
