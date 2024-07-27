@@ -1,0 +1,49 @@
+name: migration
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  migration:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      WORKLOAD_IDENTITY_PROVIDER: 'projects/[PROJECT_ID]/locations/global/workloadIdentityPools/[POOL_ID]/providers/[PROVIDER_ID]'
+      GITHUB_SERVICE_ACCOUNT: '[SERVICE_ACCOUNT_EMAIL]'
+      IMAGE_PATH: 'asia-northeast1-docker.pkg.dev/[PROJECT_ID]/migration/migration:latest'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GITHUB_SERVICE_ACCOUNT }}
+
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: 'latest'
+
+      - name: Init docker for gcloud
+        run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev
+
+      - name: Build docker image
+        run: docker build -t ${{ env.IMAGE_PATH }} .
+
+      - name: Push docker image for container registory
+        run: docker push ${{ env.IMAGE_PATH }}
+
+      - name: Execute Cloud Run Job
+        run: |
+          gcloud run jobs deploy migration \
+            --image ${{ env.IMAGE_PATH }} \
+            --region asia-northeast1
+          gcloud run jobs execute migration \
+            --region asia-northeast1
