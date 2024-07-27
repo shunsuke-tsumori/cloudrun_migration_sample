@@ -6,13 +6,14 @@ terraform {
       version = "~> 5.38.0"
     }
     google-beta = {
-      source = "hashicorp/google-beta"
+      source  = "hashicorp/google-beta"
       version = "~> 5.38.0"
     }
   }
 }
 
-resource "google_storage_bucket" "random35288065298" {
-  location = "asia-northeast1"
-  name     = "random35288065298"
+module "database" {
+  source   = "../module/database"
+  # 本来はシークレットマネージャなどを使用するべき
+  password = var.password
 }

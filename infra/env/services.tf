@@ -2,6 +2,7 @@ locals {
   services = toset([
     "run.googleapis.com",
     "cloudbuild.googleapis.com",
+    "servicenetworking.googleapis.com",
   ])
 }
 
